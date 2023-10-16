@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Entbannungsantrag</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <h1>Entbannungsantrag</h1>
+    <p>Fülle die Lücken aus um einen Entbannungsantrag zu verfassen:</p>
+
+    <form id="unbanForm">
+        <label for="discordUsername">Dein Discord Username:</label>
+        <input type="text" id="discordUsername" name="discordUsername" required><br><br>
+
+        <label for="reason">Beschreibung warum du gebannt worden bist + Entschuldigung:</label>
+        <textarea id="reason" name="reason" rows="4" required></textarea><br><br>
+
+        <input type="submit" value="Submit Unban Request" id="submitBtn">
+    </form>
+
+    <script>
+        const unbanForm = document.getElementById("unbanForm");
+        const submitBtn = document.getElementById("submitBtn");
+
+        let isSubmitting = false;
+
+        unbanForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            if (isSubmitting) {
+                return;
+            }
+
+            isSubmitting = true;
+            submitBtn.disabled = true; // Disable the button
+
+            const discordUsername = document.getElementById("discordUsername").value;
+            const reason = document.getElementById("reason").value;
+
+            // Replace with your Discord webhook URL
+            const webhookUrl = "https://discord.com/api/webhooks/1163502371817664622/DEKzT9AJle6fnYMI1NTGPZvjVEVLzh4JKDd0FGs9_GqGqAYl8CnWZBrPqLjryLEFJLvn";
+
+            const data = {
+                content: `Unban Request from: ${discordUsername}\n\nReason: ${reason}`
+            };
+
+            fetch(webhookUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("Unban Request sent successfully!");
+                    unbanForm.reset();
+                } else {
+                    alert("Error sending Unban Request.");
+                }
+            })
+            .catch(error => {
+                alert("Error sending Unban Request: " + error);
+            })
+            .finally(() => {
+                submitBtn.disabled = false; // Re-enable the button
+                isSubmitting = false;
+            });
+        });
+    </script>
+</body>
+</html>
